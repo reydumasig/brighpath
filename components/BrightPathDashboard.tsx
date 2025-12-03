@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import * as XLSX from "xlsx";
 
 type SectionKey =
   | "architecture"
@@ -911,6 +912,40 @@ const BrightPathDashboard: React.FC = () => {
     );
   });
 
+  const downloadTableAsExcel = (
+    title: string,
+    headers: string[],
+    rows: string[][]
+  ) => {
+    // Create worksheet data
+    const worksheetData = [headers, ...rows];
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Set column widths
+    const columnWidths = headers.map((_, idx) => {
+      const maxLength = Math.max(
+        headers[idx].length,
+        ...rows.map((row) => (row[idx] || "").length)
+      );
+      return { wch: Math.min(maxLength + 2, 50) };
+    });
+    worksheet["!cols"] = columnWidths;
+
+    // Create workbook and add worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "RACI Matrix");
+
+    // Generate filename from title
+    const filename = title
+      .replace(/[^a-zA-Z0-9\s]/g, "")
+      .replace(/\s+/g, "_")
+      .substring(0, 31) || "RACI_Table";
+
+    // Download file
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+  };
+
+
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: '#0D1117', color: '#FFFFFF' }}>
       {/* Sidebar */}
@@ -1042,48 +1077,75 @@ const BrightPathDashboard: React.FC = () => {
                   <div className="px-4 pb-4 pt-1 text-sm whitespace-pre-line" style={{ color: '#DCE1E7', lineHeight: '1.5' }}>
                     {section.body}
                     {section.tableHeaders && section.tableRows && (
-                      <div className="mt-4 overflow-x-auto">
-                        <table className="min-w-full text-xs" style={{ borderCollapse: "collapse" }}>
-                          <thead>
-                            <tr>
-                              {section.tableHeaders.map((header) => (
-                                <th
-                                  key={header}
-                                  style={{
-                                    border: "1px solid rgba(54, 196, 196, 0.3)",
-                                    padding: "0.5rem 0.75rem",
-                                    backgroundColor: "#1A2A44",
-                                    color: "#FFFFFF",
-                                    textAlign: "left",
-                                    fontFamily: "var(--font-montserrat)",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {header}
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {section.tableRows.map((row, idx) => (
-                              <tr key={idx}>
-                                {row.map((cell, cIdx) => (
-                                  <td
-                                    key={cIdx}
+                      <div className="mt-4">
+                        <div className="mb-3 flex justify-end">
+                          <button
+                            onClick={() =>
+                              downloadTableAsExcel(
+                                section.title,
+                                section.tableHeaders!,
+                                section.tableRows!
+                              )
+                            }
+                            className="px-4 py-2 rounded-lg text-xs font-semibold transition shadow-md"
+                            style={{
+                              backgroundColor: '#36C4C4',
+                              color: '#FFFFFF',
+                              fontFamily: 'var(--font-montserrat)',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#2BA8A8';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = '#36C4C4';
+                            }}
+                          >
+                            📥 Download Excel
+                          </button>
+                        </div>
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full text-xs" style={{ borderCollapse: "collapse" }}>
+                            <thead>
+                              <tr>
+                                {section.tableHeaders.map((header) => (
+                                  <th
+                                    key={header}
                                     style={{
-                                      border: "1px solid rgba(54, 196, 196, 0.2)",
-                                      padding: "0.4rem 0.75rem",
-                                      backgroundColor: idx % 2 === 0 ? "rgba(13, 17, 23, 0.9)" : "rgba(26, 42, 68, 0.8)",
-                                      whiteSpace: cIdx === 0 ? "normal" : "nowrap",
+                                      border: "1px solid rgba(54, 196, 196, 0.3)",
+                                      padding: "0.5rem 0.75rem",
+                                      backgroundColor: "#1A2A44",
+                                      color: "#FFFFFF",
+                                      textAlign: "left",
+                                      fontFamily: "var(--font-montserrat)",
+                                      fontWeight: 600,
                                     }}
                                   >
-                                    {cell}
-                                  </td>
+                                    {header}
+                                  </th>
                                 ))}
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {section.tableRows.map((row, idx) => (
+                                <tr key={idx}>
+                                  {row.map((cell, cIdx) => (
+                                    <td
+                                      key={cIdx}
+                                      style={{
+                                        border: "1px solid rgba(54, 196, 196, 0.2)",
+                                        padding: "0.4rem 0.75rem",
+                                        backgroundColor: idx % 2 === 0 ? "rgba(13, 17, 23, 0.9)" : "rgba(26, 42, 68, 0.8)",
+                                        whiteSpace: cIdx === 0 ? "normal" : "nowrap",
+                                      }}
+                                    >
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     )}
                   </div>

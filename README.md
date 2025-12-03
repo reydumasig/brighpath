@@ -1,24 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BrightPath Ops Dashboard
+
+A Next.js dashboard for BrightPath's current-state analysis and centralization plan, featuring interactive RACI matrices with Excel import/export functionality.
+
+## Features
+
+- **Interactive RACI Matrix**: View responsibility matrices across all systems
+- **Excel Export**: Download tables as Excel files for offline editing and sharing
+- **SUMMIT360 Branding**: Custom color scheme and typography
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
+- Vercel account (for database setup)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/reydumasig/brighpath.git
+cd brightpath
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+
+## Project Structure
+
+```
+brightpath/
+├── app/                    # Next.js app directory
+│   ├── api/               # API routes
+│   │   ├── raci-tables/   # RACI table CRUD endpoints
+│   │   └── init-db/       # Database initialization
+│   ├── globals.css        # Global styles with brand colors
+│   └── layout.tsx         # Root layout
+├── components/
+│   └── BrightPathDashboard.tsx  # Main dashboard component
+├── lib/
+│   └── db.ts              # Database utility functions
+└── docs/
+    ├── branding-guidelines.md    # Brand guidelines
+    └── setup-vercel-postgres.md  # Database setup guide
+```
+
+## Usage
+
+### RACI Matrix Tables
+
+1. Navigate to **RACI Matrix** section
+2. Click **📥 Download Excel** to export any table as an Excel file
+3. Use the downloaded file for offline editing, sharing, or documentation
+
+## Deploy on Vercel
+
+The easiest way to deploy is using the [Vercel Platform](https://vercel.com/new):
+
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Set up Vercel Postgres (see setup guide)
+4. Add environment variables
+5. Deploy!
+
+See [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 ## Learn More
 
