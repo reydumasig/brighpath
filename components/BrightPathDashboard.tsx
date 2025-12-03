@@ -12,6 +12,8 @@ type AccordionItem = {
   id: string;
   title: string;
   body: string;
+  tableHeaders?: string[];
+  tableRows?: string[][];
 };
 
 type Artifact = {
@@ -122,6 +124,673 @@ These workflow issues directly inform what S360 should centralize first.`,
     description:
       "Responsibility map showing who is Responsible, Accountable, Consulted, and Informed across systems and tasks.",
     sections: [
+      {
+        id: "raci_matrix_current",
+        title: "BrightPath – People-to-System RACI Matrix (Current State)",
+        body: `Legend
+
+R = Responsible (does the task)
+A = Accountable (owns the outcome)
+C = Consulted (provides information)
+I = Informed (needs awareness)
+
+This RACI matrix maps how key people (Recruiters, HR, Training, Scheduler, Supervisors) interact with core systems (JazzHR, HR Inbox, DocuSign, CHR, Pathfinder).
+
+Use the tables in the following sections to see per-system responsibilities and handoffs.`,
+      },
+      {
+        id: "raci_jazzhr_table",
+        title: "1. JazzHR (ATS) – RACI Table",
+        body: `High-level RACI view for how JazzHR is used today.
+
+Notes:
+- Stages are inconsistently updated → downstream confusion.
+- HR often learns about hires through emails, not JazzHR.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Enter candidate details",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Update stages (Offer Sent/Accepted)",
+            "R/A",
+            "I",
+            "I",
+            "C",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Send offer paperwork",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Notify teams (manually)",
+            "R",
+            "C",
+            "C",
+            "C",
+            "I",
+            "I",
+            "I",
+          ],
+        ],
+      },
+      {
+        id: "raci_hr_inbox_table",
+        title: "2. HR Inbox (Notification Hub) – RACI Table",
+        body: `RACI for how HR Inbox acts as the accidental hub for onboarding signals.
+
+Notes:
+- Currently the accidental source of truth for all onboarding events.
+- Many RACI mismatches originate here.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Offer/Paperwork notifications",
+            "R",
+            "A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Background check notifications",
+            "C",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Paperwork completion emails",
+            "C",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Forwarding info to others",
+            "C",
+            "R",
+            "I",
+            "C",
+            "I",
+            "I",
+            "R (future)",
+          ],
+        ],
+      },
+      {
+        id: "raci_docusign_table",
+        title: "3. DocuSign (Paperwork System) – RACI Table",
+        body: `RACI for how DocuSign paperwork is initiated and consumed.
+
+Notes:
+- No integration → Emma’s manual checks are mandatory.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Send onboarding packet",
+            "R/A",
+            "C",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Verify completion",
+            "I",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Update New Hire Tracker",
+            "I",
+            "R/A",
+            "I",
+            "C",
+            "I",
+            "I",
+            "R (future)",
+          ],
+        ],
+      },
+      {
+        id: "raci_dhs_netstudy_table",
+        title: "4. DHS / NetStudy (Background Checks) – RACI Table",
+        body: `Focused RACI slice showing how background checks currently flow across people and systems.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Background check submission",
+            "R/A",
+            "C",
+            "I",
+            "I",
+            "I",
+            "I",
+            "I",
+          ],
+          [
+            "Check status (Pass/Pending)",
+            "I",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Enter into onboarding tracker",
+            "I",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Notify training",
+            "I",
+            "R",
+            "C",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+        ],
+      },
+      {
+        id: "raci_new_hire_tracker_table",
+        title: "5. New Hire Onboarding Tracker (Google Sheet) – RACI Table",
+        body: `RACI for the shared New Hire Onboarding Tracker, where many downstream issues originate.
+
+Notes:
+- Supervisor & site are often incorrect (root cause of training + scheduling issues).
+- Ideal candidate for Pathfinder centralization.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Create entry",
+            "I",
+            "R/A",
+            "C",
+            "C",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Update background check",
+            "I",
+            "R",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Add site/supervisor info",
+            "C",
+            "R",
+            "C",
+            "R/A",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Update hire date",
+            "C",
+            "R/A",
+            "C",
+            "R",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Validate paperwork completeness",
+            "C",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+        ],
+      },
+      {
+        id: "raci_staffing_pattern_table",
+        title: "6. Staffing Pattern (Residential + UBS) – RACI Table",
+        body: `How Staffing Pattern entries are maintained today, and where the scheduler becomes a bottleneck.
+
+Notes:
+- Scheduler (Secellia) is the bottleneck here.
+- Heavy downstream impact if Staffing Pattern is inaccurate.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Add new hire to staffing",
+            "C",
+            "C",
+            "C",
+            "R/A",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Verify job offer details",
+            "C",
+            "C",
+            "I",
+            "R/A",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Adjust site assignment",
+            "C",
+            "C",
+            "I",
+            "R/A",
+            "C",
+            "I",
+            "C",
+          ],
+          [
+            "Communicate changes",
+            "C",
+            "I",
+            "C",
+            "R/A",
+            "C",
+            "I",
+            "I",
+          ],
+        ],
+      },
+      {
+        id: "raci_training_tracker_table",
+        title: "7. Training Tracker (Master Training) – RACI Table",
+        body: `RACI for the Master Training Tracker, where \"green\" status is the true readiness signal.
+
+Notes:
+- \"Green\" status is the REAL readiness signal.
+- Downstream systems depend heavily on timely updates here.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Create training entry",
+            "I",
+            "I",
+            "R/A",
+            "C",
+            "C",
+            "I",
+            "C (future)",
+          ],
+          [
+            "Assign supervisor",
+            "C",
+            "C",
+            "R/A",
+            "C",
+            "C",
+            "I",
+            "C",
+          ],
+          [
+            "Assign primary site",
+            "C",
+            "C",
+            "R/A",
+            "C",
+            "C",
+            "I",
+            "C",
+          ],
+          [
+            "Mark training completed",
+            "I",
+            "I",
+            "R/A",
+            "I",
+            "R",
+            "I",
+            "C",
+          ],
+          [
+            "Mark employee \"GREEN\"",
+            "I",
+            "I",
+            "R/A",
+            "I",
+            "C",
+            "I",
+            "I",
+          ],
+        ],
+      },
+      {
+        id: "raci_google_drive_table",
+        title: "8. Google Drive – Employee Folders – RACI Table",
+        body: `RACI for creation and maintenance of employee folders in Google Drive.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Create employee folder",
+            "I",
+            "R/A",
+            "I",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Upload documents",
+            "I",
+            "R",
+            "R",
+            "I",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Maintain naming conventions",
+            "I",
+            "R/A",
+            "I",
+            "C",
+            "I",
+            "I",
+            "C",
+          ],
+        ],
+      },
+      {
+        id: "raci_chr_table",
+        title: "9. CHR (HRIS System) – RACI Table",
+        body: `RACI for CHR as the system of record for employee data and compliance.
+
+Notes:
+- CHR MUST match the Training Tracker, but both are currently manual → mismatches common.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Create CHR profile",
+            "I",
+            "R/A",
+            "C",
+            "I",
+            "I",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Update credentials",
+            "I",
+            "R",
+            "C",
+            "I",
+            "C",
+            "I",
+            "R (future)",
+          ],
+          [
+            "Match with training data",
+            "I",
+            "R",
+            "C",
+            "I",
+            "C",
+            "I",
+            "C",
+          ],
+          [
+            "Compliance cross-check",
+            "I",
+            "R/A",
+            "R/A",
+            "I",
+            "C",
+            "I",
+            "R (future)",
+          ],
+        ],
+      },
+      {
+        id: "raci_wiw_table",
+        title: "10. When I Work (Scheduling System) – RACI Table",
+        body: `RACI for how employees are added and managed in When I Work.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Add employee to WIW",
+            "I",
+            "C",
+            "C",
+            "R/A",
+            "C",
+            "I",
+            "C (future)",
+          ],
+          [
+            "Assign shifts",
+            "I",
+            "I",
+            "I",
+            "R/A",
+            "C",
+            "I",
+            "I",
+          ],
+          [
+            "Adjust schedules",
+            "I",
+            "I",
+            "I",
+            "R/A",
+            "C",
+            "I",
+            "I",
+          ],
+        ],
+      },
+      {
+        id: "raci_supervisors_table",
+        title: "11. Supervisors (Site-Level Ops) – RACI Table",
+        body: `RACI for supervisors in their site-level, readiness, and orientation responsibilities.`,
+        tableHeaders: [
+          "Task",
+          "Recruiters",
+          "HR Emma",
+          "Training",
+          "Scheduler",
+          "Supervisor",
+          "CHR System",
+          "Pathfinder",
+        ],
+        tableRows: [
+          [
+            "Provide site assignment",
+            "C",
+            "C",
+            "C",
+            "C",
+            "R/A",
+            "I",
+            "I",
+          ],
+          [
+            "Verify orientation/shadowing",
+            "I",
+            "I",
+            "C",
+            "I",
+            "R/A",
+            "I",
+            "I",
+          ],
+          [
+            "Report readiness to training",
+            "I",
+            "I",
+            "R/A",
+            "I",
+            "R",
+            "I",
+            "I",
+          ],
+        ],
+      },
+      {
+        id: "raci_pathfinder_future_table",
+        title: "Pathfinder Role (Future) – RACI Summary",
+        body: `Future-state view of Pathfinder as the centralized data operations engine that removes manual burden from Emma, Training, and Scheduling.`,
+        tableHeaders: [
+          "Task",
+          "Pathfinder (Future Role)",
+        ],
+        tableRows: [
+          ["Update all trackers nightly", "R/A"],
+          ["Validate background checks", "R"],
+          ["Verify paperwork completeness", "R"],
+          ["Ensure consistency across Staffing/Training/HR", "R/A"],
+          ["Maintain naming conventions", "R"],
+          ["Create CHR profiles after validation", "R"],
+          ["Input new hires into WIW", "C"],
+          ["Manage system-to-system consistency", "R/A"],
+          ["Provide weekly cross-system audit", "R/A"],
+        ],
+      },
       {
         id: "raci_roles",
         title: "Core Roles & Systems",
@@ -372,6 +1041,51 @@ const BrightPathDashboard: React.FC = () => {
                 {isOpen && (
                   <div className="px-4 pb-4 pt-1 text-sm whitespace-pre-line" style={{ color: '#DCE1E7', lineHeight: '1.5' }}>
                     {section.body}
+                    {section.tableHeaders && section.tableRows && (
+                      <div className="mt-4 overflow-x-auto">
+                        <table className="min-w-full text-xs" style={{ borderCollapse: "collapse" }}>
+                          <thead>
+                            <tr>
+                              {section.tableHeaders.map((header) => (
+                                <th
+                                  key={header}
+                                  style={{
+                                    border: "1px solid rgba(54, 196, 196, 0.3)",
+                                    padding: "0.5rem 0.75rem",
+                                    backgroundColor: "#1A2A44",
+                                    color: "#FFFFFF",
+                                    textAlign: "left",
+                                    fontFamily: "var(--font-montserrat)",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {header}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {section.tableRows.map((row, idx) => (
+                              <tr key={idx}>
+                                {row.map((cell, cIdx) => (
+                                  <td
+                                    key={cIdx}
+                                    style={{
+                                      border: "1px solid rgba(54, 196, 196, 0.2)",
+                                      padding: "0.4rem 0.75rem",
+                                      backgroundColor: idx % 2 === 0 ? "rgba(13, 17, 23, 0.9)" : "rgba(26, 42, 68, 0.8)",
+                                      whiteSpace: cIdx === 0 ? "normal" : "nowrap",
+                                    }}
+                                  >
+                                    {cell}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
