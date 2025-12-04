@@ -97,13 +97,10 @@ const OnboardingSwimlane: React.FC = () => {
       <header className="space-y-3">
         <p className="text-sm tracking-[0.22em] uppercase text-slate-500">BrightPath • New Hire Data Map</p>
         <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
-          Onboarding Tracker – Swimlane View
+          New Onboarding Tracker Summary View
         </h2>
         <p className="text-base text-slate-300 max-w-3xl leading-relaxed">
-          A simple swimlane-style view showing{' '}
-          <span className="font-semibold">which system holds what data</span> and{' '}
-          <span className="font-semibold">who is responsible</span> for entering it. This matches Lane's
-          "interconnection between departments" concept.
+          High level overview that captures source data and owner
         </p>
       </header>
 
