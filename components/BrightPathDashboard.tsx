@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import * as XLSX from "xlsx";
 
 type SectionKey =
@@ -79,43 +80,303 @@ These are the structural reasons BrightPath struggles with accuracy and scalabil
       "Step-by-step flow from candidate recruitment through Day 1, training, CHR creation, scheduling, and compliance.",
     sections: [
       {
-        id: "wf_overview",
-        title: "End-to-End Flow (High Level)",
-        body: `The workflow runs from:
+        id: "wf_candidate_entry",
+        title: "0. Candidate Enters System",
+        body: `→ Recruiters (Jeremy & Tyler) manage candidate in JazzHR
 
-Candidate → Offer → Paperwork → Background Check → New Hire Tracker →
-Staffing Pattern → Training Tracker → CHR → When I Work → Day 1 → Ongoing Compliance.
+     - Stages frequently not updated → data unreliable
+     - Offer Sent should be entered (often is not)
+     - Offer Accepted should be marked (often is not)
 
-Each step includes a system and one or more human owners, with multiple decision points and dependencies.`,
+Impact:
+
+Training, HR, and Scheduling have no reliable signal of when someone is officially hired.`,
       },
       {
-        id: "wf_detailed",
-        title: "Key Stages & Hand-offs",
-        body: `Critical stages:
+        id: "wf_offer_paperwork",
+        title: "1. Offer & Paperwork Stage",
+        body: `IDEAL FLOW (What Should Happen):
 
-1. Recruiters update JazzHR (often inconsistently).
-2. DocuSign sends paperwork; completion shows up in HR Inbox.
-3. Emma updates New Hire Tracker and manages NetStudy background checks.
-4. Scheduler (Secellia) uses the Staffing Pattern to assign site and role.
-5. Training (Isaac/Laura) uses New Hire + Staffing Pattern to manage "green" status.
-6. HR manually creates CHR profiles.
-7. Scheduler adds new hires to When I Work and finalizes schedules.
-8. Training + HR manually track renewals and compliance.
+[JazzHR] → [Offer Sent] → [DocuSign packet]
+         (automated trigger)
 
-Every missed update or mismatch at one stage cascades into the others.`,
+ACTUAL FLOW (What Really Happens):
+
+[JazzHR] → (often fails) ↘
+                          [HR Inbox] receives manual notifications
+
+What Actually Happens:
+• Recruiters manually email HR and supervisors.
+• Emma checks the HR inbox constantly for paperwork updates.
+• DocuSign completion triggers an email, not a system update.
+
+Pain Points:
+• No automated bridge JazzHR → HR.
+• Supervisors often don't know a hire is coming.
+• Emma must reconcile recruiter messages against JazzHR manually.`,
       },
       {
-        id: "wf_bottlenecks",
-        title: "Bottlenecks & Failure Points",
-        body: `Main bottlenecks:
-- JazzHR stages not maintained correctly
-- HR Inbox as the only reliable signal of progress
-- New Hire Tracker with missing or incorrect site/supervisor info
-- Training cannot mark people "green" without chasing data
-- Scheduling often receives late or wrong information
-- Compliance tracking is manual and fragmented
+        id: "wf_paperwork_completion",
+        title: "2. Paperwork Completion → Initiation of HR Workflow",
+        body: `Once DocuSign is completed:
 
-These workflow issues directly inform what S360 should centralize first.`,
+[HR Inbox] → Emma manually checks:
+
+    - W4
+    - I9
+    - Direct Deposit
+    - Policies
+    - Acknowledgments
+    - Required DHS forms
+
+Emma then:
+
+→ Manually adds new hire to the New Hire Onboarding Tracker
+
+→ Manually checks NetStudy background check status
+
+→ Manually begins email creation, folder creation, CHR prep
+
+Pain Points:
+• Zero automation.
+• If recruiters forget to notify her, hires are invisible.
+• Background checks come through a separate DHS system not connected to anything.`,
+      },
+      {
+        id: "wf_background_check",
+        title: "3. Background Check & DHS / NetStudy Processing",
+        body: `[DHS/NetStudy] → Email notification → HR Inbox → Emma
+
+Emma manually checks:
+
+- "Pass," "Pending," or "More Info Required"
+
+- Fingerprint scheduling
+
+- Temporary clearance vs. full clearance
+
+She updates the New Hire Tracker manually.
+
+Downstream impact:
+• Training cannot "green" the employee without the completion.
+• Scheduling cannot slot them until Isaac marks them ready.`,
+      },
+      {
+        id: "wf_tracker_entry",
+        title: "4. New Hire Onboarding Tracker Entry (HR → System)",
+        body: `Emma updates fields such as:
+
+- First & Last Name
+- Email
+- Phone
+- Primary Site (often unclear)
+- Supervisor (frequently wrong)
+- Position Type (Resi/UBS)
+- Background check status
+- Paperwork completion
+- Start date (often missing)
+
+Pain Points Identified in Transcripts:
+• Supervisors change frequently → wrong in tracker.
+• Recruiters frequently provide outdated site assignment.
+• Missing start dates → scheduling chaos.
+• Inconsistent naming conventions → folder mismatch.
+• No unique identifier → confusion across systems.`,
+      },
+      {
+        id: "wf_staffing_pattern",
+        title: "5. Site Assignment & Staffing Pattern (Secellia)",
+        body: `Once a hire is known (often via HR inbox alert, not JazzHR):
+
+Emma notifies Secellia → "This person was hired"
+
+Secellia:
+
+→ Checks offer type (Resi vs UBS)
+
+→ Finds the correct Staffing Pattern sheet
+
+→ Manually validates job offer info
+
+→ Manually adds the employee to the appropriate site roster
+
+→ Manually estimates shift placement
+
+→ May contact supervisors for verification
+
+Pain Points:
+• Staffing Patterns split (UBS vs Residential).
+• Recruiter → HR → Scheduler communication flow is inconsistent.
+• No single system indicates where the employee actually belongs.
+• Start dates often "float" because data is missing.`,
+      },
+      {
+        id: "wf_training_tracker",
+        title: "6. Training Tracker Entry (Isaac & Laura)",
+        body: `Training team pulls from:
+
+→ New Hire Onboarding Tracker
+→ Staffing Pattern (Primary Site)
+→ Email from HR (informal pings)
+→ Word-of-mouth or Slack messages
+
+Isaac/Laura manually add:
+
+- Hire name
+- Supervisor
+- Primary site
+- Whether they are "green"
+- Required trainings (CPR, Med Admin, Orientation)
+- Completion dates
+
+Critical role:
+
+Isaac marks an employee "green."
+
+This is the true readiness signal for the entire organization.
+
+If Isaac cannot find hire data (common), the process stalls.
+
+Training Pain Points:
+• Wrong supervisor assignment → wrong training plan.
+• Missing start dates → training mismatches.
+• No system integrates training completion → must manually check CHR.`,
+      },
+      {
+        id: "wf_supervisor_orientation",
+        title: "7. Supervisor & Orientation Logic",
+        body: `Training must coordinate:
+
+→ Orientation groups
+→ Site-specific training
+→ CPR / Med Pass
+→ Initial shadow shifts
+
+Supervisors often do not reply or reply late.
+
+Impact:
+
+Training cannot accurately green-light the employee.`,
+      },
+      {
+        id: "wf_google_drive",
+        title: "8. Google Drive Folder Creation (HR)",
+        body: `Once HR sees training & background check progress:
+
+Emma manually creates:
+
+    - Employee folder
+    - Subfolders for paperwork & training
+    - File naming based on site/supervisor (often inaccurate)
+
+Pain Points:
+• Incorrect folder naming due to bad upstream data.
+• Google Drive is temporary — CHR will eventually replace most storage.
+• Manual drag-and-drop of all documents.`,
+      },
+      {
+        id: "wf_chr_creation",
+        title: "9. CHR Profile Creation (HR)",
+        body: `- Name
+- Email
+- DOB
+- Address
+- Supervisor
+- Site
+- Pay rate
+- Position type
+- Paperwork status
+- Orientation status
+- Background check status
+
+Emma manually enters everything.
+
+Critical Issue:
+
+CHR must match Training Tracker, but since both are manual, mismatches are constant.`,
+      },
+      {
+        id: "wf_scheduling",
+        title: "10. Scheduling (WIW)",
+        body: `Once green + staffed:
+
+Training says "Ready"
+
+HR confirms documents
+
+Secellia adds to When I Work
+
+WIW requires:
+
+- Email
+- Position
+- Primary site
+- Schedule blocks
+
+Secellia manually builds:
+
+→ December master schedule
+→ Weekly backfills
+→ Daily gap coverage
+
+Pain Points:
+• Wrong supervisor or site cascades into bad schedules.
+• If HR or Training delays data entry, scheduling is pushed last-minute.
+• If a hire is green late, schedule must be rebalanced manually.`,
+      },
+      {
+        id: "wf_day1_onboarding",
+        title: "11. Day 1 Onboarding + Supervisor Oversight",
+        body: `Supervisor validates:
+
+- Arrival
+- Orientation
+- Shadow shifts
+- Site-specific requirements
+
+They report back:
+
+→ Training
+→ HR
+→ Scheduler
+
+But reporting is inconsistent, causing:
+
+- Delayed CHR updates
+- Delayed training completion entries
+- Missed compliance deadlines`,
+      },
+      {
+        id: "wf_ongoing_compliance",
+        title: "12. Ongoing Compliance & Monthly Training Updates",
+        body: `Training Team + HR must:
+
+- Update CPR expirations
+- Update background check renewals
+- Update Med Admin renewals
+- Assign new trainings
+- Perform manual cross-checks with CHR
+
+Pain Points:
+• Monthly tracking is 100% manual
+• Supervisor signatures are inconsistent
+• Wrong start dates break renewal windows`,
+      },
+      {
+        id: "wf_cross_system_pain",
+        title: "🚨 Cross-System Pain Points (Summary)",
+        body: `1. No automated trigger from JazzHR → HR
+2. HR Inbox is the accidental source of truth
+3. New Hire Tracker is manual, inconsistent, and incomplete
+4. Staffing Pattern has two versions (UBS & Resi)
+5. Training depends on multiple systems + human memory
+6. "Green" status has no formal trigger
+7. Supervisor info is wrong 30–40% of the time
+8. CHR requires full re-entry of data
+9. WIW scheduling depends on all upstream systems
+10. Merge cells & formatting break automations
+11. No unique identifier (email created too late)
+12. High turnover → high volume → no system can keep up manually`,
       },
     ],
   },
@@ -989,6 +1250,23 @@ const BrightPathDashboard: React.FC = () => {
               {artifact.label}
             </button>
           ))}
+          <Link
+            href="/brightpath-visuals"
+            className="text-left px-3 py-2 rounded-lg text-sm transition shadow-md"
+            style={{
+              backgroundColor: "transparent",
+              color: "#DCE1E7",
+              border: "1px solid rgba(54, 196, 196, 0.2)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(26, 42, 68, 0.8)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+            }}
+          >
+            Top Level View
+          </Link>
         </nav>
 
         <div className="mt-4">
@@ -1044,19 +1322,47 @@ const BrightPathDashboard: React.FC = () => {
 
           {filteredSections.map((section) => {
             const isOpen = openAccordions[section.id] ?? true;
+            const isCriticalIssue = section.id === 'wf_candidate_entry';
+            const isSummarySection = section.id === 'wf_cross_system_pain';
+            const isFlowDiagram = section.id === 'wf_offer_paperwork' || section.id === 'wf_paperwork_completion' || section.id === 'wf_background_check' || section.id === 'wf_tracker_entry' || section.id === 'wf_staffing_pattern' || section.id === 'wf_training_tracker' || section.id === 'wf_supervisor_orientation' || section.id === 'wf_google_drive' || section.id === 'wf_chr_creation' || section.id === 'wf_scheduling' || section.id === 'wf_day1_onboarding' || section.id === 'wf_ongoing_compliance' || section.id === 'wf_cross_system_pain' || section.id === 'wf_overview' || section.id === 'wf_detailed' || section.id === 'wf_bottlenecks';
             return (
               <div
                 key={section.id}
                 className="border rounded-xl overflow-hidden transition"
                 style={{
-                  backgroundColor: 'rgba(26, 42, 68, 0.5)',
-                  borderColor: 'rgba(54, 196, 196, 0.2)'
+                  backgroundColor: isCriticalIssue 
+                    ? 'rgba(220, 38, 38, 0.1)' 
+                    : isSummarySection
+                    ? 'rgba(220, 38, 38, 0.15)'
+                    : isFlowDiagram 
+                    ? 'rgba(251, 191, 36, 0.1)' 
+                    : 'rgba(26, 42, 68, 0.5)',
+                  borderColor: isCriticalIssue 
+                    ? 'rgba(239, 68, 68, 0.5)' 
+                    : isSummarySection
+                    ? 'rgba(239, 68, 68, 0.7)'
+                    : isFlowDiagram 
+                    ? 'rgba(251, 191, 36, 0.5)' 
+                    : 'rgba(54, 196, 196, 0.2)',
+                  borderWidth: (isCriticalIssue || isFlowDiagram || isSummarySection) ? '2px' : '1px'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 42, 68, 0.7)';
+                  e.currentTarget.style.backgroundColor = isCriticalIssue 
+                    ? 'rgba(220, 38, 38, 0.15)' 
+                    : isSummarySection
+                    ? 'rgba(220, 38, 38, 0.2)'
+                    : isFlowDiagram 
+                    ? 'rgba(251, 191, 36, 0.15)' 
+                    : 'rgba(26, 42, 68, 0.7)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(26, 42, 68, 0.5)';
+                  e.currentTarget.style.backgroundColor = isCriticalIssue 
+                    ? 'rgba(220, 38, 38, 0.1)' 
+                    : isSummarySection
+                    ? 'rgba(220, 38, 38, 0.15)'
+                    : isFlowDiagram 
+                    ? 'rgba(251, 191, 36, 0.1)' 
+                    : 'rgba(26, 42, 68, 0.5)';
                 }}
               >
                 <button
@@ -1064,7 +1370,16 @@ const BrightPathDashboard: React.FC = () => {
                   className="w-full flex items-center justify-between px-4 py-3 text-left transition"
                   style={{ color: '#FFFFFF' }}
                 >
-                  <div>
+                  <div className="flex items-center gap-2">
+                    {isCriticalIssue && (
+                      <span className="text-red-400" style={{ fontSize: '0.875rem' }}>⚠️</span>
+                    )}
+                    {isSummarySection && (
+                      <span className="text-red-400" style={{ fontSize: '0.875rem' }}>🚨</span>
+                    )}
+                    {isFlowDiagram && (
+                      <span className="text-amber-400" style={{ fontSize: '0.875rem' }}>🔄</span>
+                    )}
                     <h3 className="text-sm font-semibold" style={{ fontFamily: 'var(--font-montserrat)' }}>
                       {section.title}
                     </h3>
@@ -1075,7 +1390,943 @@ const BrightPathDashboard: React.FC = () => {
                 </button>
                 {isOpen && (
                   <div className="px-4 pb-4 pt-1 text-sm whitespace-pre-line" style={{ color: '#DCE1E7', lineHeight: '1.5' }}>
-                    {section.body}
+                    {isCriticalIssue ? (
+                      <div>
+                        <div className="mb-3">
+                          <div className="text-base font-semibold mb-2" style={{ color: '#FCA5A5' }}>
+                            → Recruiters (Jeremy & Tyler) manage candidate in JazzHR
+                          </div>
+                          <ul className="list-disc list-inside space-y-1 ml-2" style={{ color: '#FEE2E2' }}>
+                            <li>Stages frequently not updated → data unreliable</li>
+                            <li>Offer Sent should be entered (often is not)</li>
+                            <li>Offer Accepted should be marked (often is not)</li>
+                          </ul>
+                        </div>
+                        <div className="mt-4 pt-3 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                          <div className="font-semibold mb-2" style={{ color: '#FCA5A5' }}>Impact:</div>
+                          <div style={{ color: '#FEE2E2' }}>
+                            Training, HR, and Scheduling have no reliable signal of when someone is officially hired.
+                          </div>
+                        </div>
+                      </div>
+                    ) : isFlowDiagram ? (
+                      section.id === 'wf_background_check' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Background Check Process:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [DHS/NetStudy]
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Email notification
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [HR Inbox]
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Emma's Manual Checks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Emma manually checks:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>"Pass," "Pending," or "More Info Required"</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Fingerprint scheduling</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Temporary clearance vs. full clearance</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Manual Update */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                              <span className="text-lg">→</span>
+                              <span>She updates the New Hire Tracker manually.</span>
+                            </div>
+                          </div>
+
+                          {/* Downstream Impact */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Downstream impact:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Training cannot "green" the employee without the completion.</li>
+                              <li>Scheduling cannot slot them until Isaac marks them ready.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_tracker_entry' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Emma updates fields in New Hire Onboarding Tracker:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [New Hire Onboarding Tracker]
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Fields Emma Updates */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Fields updated:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>First & Last Name</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Email</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Phone</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FCA5A5' }}>
+                                <span className="text-xs">•</span>
+                                <span>Primary Site <span className="text-xs italic">(often unclear)</span></span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FCA5A5' }}>
+                                <span className="text-xs">•</span>
+                                <span>Supervisor <span className="text-xs italic">(frequently wrong)</span></span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Position Type (Resi/UBS)</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Background check status</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Paperwork completion</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FCA5A5' }}>
+                                <span className="text-xs">•</span>
+                                <span>Start date <span className="text-xs italic">(often missing)</span></span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points Identified in Transcripts:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Supervisors change frequently → wrong in tracker.</li>
+                              <li>Recruiters frequently provide outdated site assignment.</li>
+                              <li>Missing start dates → scheduling chaos.</li>
+                              <li>Inconsistent naming conventions → folder mismatch.</li>
+                              <li>No unique identifier → confusion across systems.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_staffing_pattern' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Once a hire is known (often via HR inbox alert, not JazzHR):
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                notifies Secellia
+                              </div>
+                              <div className="text-xs self-center italic" style={{ color: '#FCA5A5' }}>
+                                "This person was hired"
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Secellia's Manual Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Secellia:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Checks offer type (Resi vs UBS)</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Finds the correct Staffing Pattern sheet</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually validates job offer info</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually adds the employee to the appropriate site roster</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually estimates shift placement</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>May contact supervisors for verification</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Staffing Patterns split (UBS vs Residential).</li>
+                              <li>Recruiter → HR → Scheduler communication flow is inconsistent.</li>
+                              <li>No single system indicates where the employee actually belongs.</li>
+                              <li>Start dates often "float" because data is missing.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_training_tracker' ? (
+                        <div className="space-y-6">
+                          {/* Data Sources */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Training team pulls from:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>New Hire Onboarding Tracker</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Staffing Pattern (Primary Site)</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Email from HR (informal pings)</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Word-of-mouth or Slack messages</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Isaac/Laura's Manual Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Isaac/Laura manually add:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Hire name</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Supervisor</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Primary site</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#86EFAC' }}>
+                                <span className="text-xs">•</span>
+                                <span className="font-semibold">Whether they are "green"</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Required trainings (CPR, Med Admin, Orientation)</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Completion dates</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Critical Role */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(34, 197, 94, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#86EFAC' }}>
+                              Critical role:
+                            </div>
+                            <div className="space-y-2 ml-2" style={{ color: '#D1FAE5' }}>
+                              <div className="font-semibold">
+                                Isaac marks an employee "green."
+                              </div>
+                              <div>
+                                This is the true readiness signal for the entire organization.
+                              </div>
+                              <div className="text-sm italic">
+                                If Isaac cannot find hire data (common), the process stalls.
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Training Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Training Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Wrong supervisor assignment → wrong training plan.</li>
+                              <li>Missing start dates → training mismatches.</li>
+                              <li>No system integrates training completion → must manually check CHR.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_supervisor_orientation' ? (
+                        <div className="space-y-6">
+                          {/* Training Coordination Requirements */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Training must coordinate:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Orientation groups</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Site-specific training</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>CPR / Med Pass</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Initial shadow shifts</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Supervisor Communication Issue */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Supervisor Communication Issue:
+                            </div>
+                            <div className="ml-2" style={{ color: '#FEE2E2' }}>
+                              Supervisors often do not reply or reply late.
+                            </div>
+                          </div>
+
+                          {/* Impact */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Impact:
+                            </div>
+                            <div className="ml-2 font-semibold" style={{ color: '#FEE2E2' }}>
+                              Training cannot accurately green-light the employee.
+                            </div>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_google_drive' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Once HR sees training & background check progress:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Training & Background Check Progress
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma manually creates
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Emma's Manual Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Emma manually creates:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Employee folder</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Subfolders for paperwork & training</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FCA5A5' }}>
+                                <span className="text-xs">•</span>
+                                <span>File naming based on site/supervisor <span className="text-xs italic">(often inaccurate)</span></span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Incorrect folder naming due to bad upstream data.</li>
+                              <li>Google Drive is temporary — CHR will eventually replace most storage.</li>
+                              <li>Manual drag-and-drop of all documents.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_chr_creation' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Emma manually enters into CHR:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [CHR Profile]
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Fields Emma Enters */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Fields entered:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Name</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Email</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>DOB</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Address</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Supervisor</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Site</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Pay rate</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Position type</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Paperwork status</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Orientation status</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Background check status</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Critical Issue */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Critical Issue:
+                            </div>
+                            <div className="ml-2 font-semibold" style={{ color: '#FEE2E2' }}>
+                              CHR must match Training Tracker, but since both are manual, mismatches are constant.
+                            </div>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_scheduling' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Once green + staffed:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(34, 197, 94, 0.2)', borderColor: 'rgba(34, 197, 94, 0.5)' }}>
+                                Training says "Ready"
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                HR confirms documents
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Secellia adds to [When I Work]
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* WIW Requirements */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              WIW requires:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Email</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Position</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Primary site</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Schedule blocks</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Secellia's Manual Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Secellia manually builds:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>December master schedule</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Weekly backfills</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Daily gap coverage</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Wrong supervisor or site cascades into bad schedules.</li>
+                              <li>If HR or Training delays data entry, scheduling is pushed last-minute.</li>
+                              <li>If a hire is green late, schedule must be rebalanced manually.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_day1_onboarding' ? (
+                        <div className="space-y-6">
+                          {/* Supervisor Validation */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Supervisor validates:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Arrival</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Orientation</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Shadow shifts</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Site-specific requirements</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Reporting Flow */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              They report back:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-2" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Supervisor
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Training
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                HR
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Scheduler
+                              </div>
+                            </div>
+                            <div className="text-xs italic mt-2 ml-2" style={{ color: '#FCA5A5' }}>
+                              But reporting is inconsistent
+                            </div>
+                          </div>
+
+                          {/* Problems Caused */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Causing:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Delayed CHR updates</li>
+                              <li>Delayed training completion entries</li>
+                              <li>Missed compliance deadlines</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_ongoing_compliance' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Training Team + HR must:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Training Team + HR
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Manual Compliance Tracking
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Tasks:
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Update CPR expirations</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Update background check renewals</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Update Med Admin renewals</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Assign new trainings</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Perform manual cross-checks with CHR</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Monthly tracking is 100% manual</li>
+                              <li>Supervisor signatures are inconsistent</li>
+                              <li>Wrong start dates break renewal windows</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_cross_system_pain' ? (
+                        <div className="space-y-6">
+                          {/* Pain Points Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>1.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>No automated trigger from JazzHR → HR</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>2.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>HR Inbox is the accidental source of truth</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>3.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>New Hire Tracker is manual, inconsistent, and incomplete</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>4.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>Staffing Pattern has two versions (UBS & Resi)</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>5.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>Training depends on multiple systems + human memory</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>6.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>"Green" status has no formal trigger</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>7.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>Supervisor info is wrong 30–40% of the time</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>8.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>CHR requires full re-entry of data</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>9.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>WIW scheduling depends on all upstream systems</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>10.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>Merge cells & formatting break automations</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>11.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>No unique identifier (email created too late)</span>
+                              </div>
+                            </div>
+                            <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: 'rgba(239, 68, 68, 0.4)' }}>
+                              <div className="flex items-start gap-2">
+                                <span className="font-semibold text-sm" style={{ color: '#FCA5A5' }}>12.</span>
+                                <span className="text-sm" style={{ color: '#FEE2E2' }}>High turnover → high volume → no system can keep up manually</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : section.id === 'wf_paperwork_completion' ? (
+                        <div className="space-y-6">
+                          {/* Process Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Once DocuSign is completed:
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-4" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [HR Inbox]
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                Emma manually checks
+                              </div>
+                            </div>
+                            
+                            {/* Checklist */}
+                            <div className="ml-4 mt-3 space-y-1.5">
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>W4</span>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>I9</span>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Direct Deposit</span>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Policies</span>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Acknowledgments</span>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-xs">•</span>
+                                <span>Required DHS forms</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Emma's Manual Tasks */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              Emma then:
+                            </div>
+                            <div className="space-y-2 ml-2">
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually adds new hire to the New Hire Onboarding Tracker</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually checks NetStudy background check status</span>
+                              </div>
+                              <div className="flex items-start gap-2" style={{ color: '#FEE2E2' }}>
+                                <span className="text-lg">→</span>
+                                <span>Manually begins email creation, folder creation, CHR prep</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Zero automation.</li>
+                              <li>If recruiters forget to notify her, hires are invisible.</li>
+                              <li>Background checks come through a separate DHS system not connected to anything.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-6">
+                          {/* Ideal Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#86EFAC' }}>
+                              ✓ IDEAL FLOW (What Should Happen):
+                            </div>
+                            <div className="flex items-center gap-3 flex-wrap mb-2" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(54, 196, 196, 0.2)', borderColor: 'rgba(54, 196, 196, 0.5)' }}>
+                                [JazzHR]
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(54, 196, 196, 0.2)', borderColor: 'rgba(54, 196, 196, 0.5)' }}>
+                                [Offer Sent]
+                              </div>
+                              <span className="text-lg">→</span>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(54, 196, 196, 0.2)', borderColor: 'rgba(54, 196, 196, 0.5)' }}>
+                                [DocuSign packet]
+                              </div>
+                            </div>
+                            <div className="text-xs italic" style={{ color: '#86EFAC' }}>
+                              (automated trigger)
+                            </div>
+                          </div>
+
+                          {/* Actual Flow */}
+                          <div>
+                            <div className="font-semibold mb-3 text-base" style={{ color: '#FCA5A5' }}>
+                              ✗ ACTUAL FLOW (What Really Happens):
+                            </div>
+                            <div className="flex items-start gap-3 flex-wrap mb-2" style={{ fontFamily: 'monospace' }}>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [JazzHR]
+                              </div>
+                              <div className="flex flex-col items-center gap-1">
+                                <span className="text-lg">→</span>
+                                <span className="text-xs italic" style={{ color: '#FCA5A5' }}>(often fails)</span>
+                                <span className="text-lg">↘</span>
+                              </div>
+                              <div className="px-4 py-2 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.2)', borderColor: 'rgba(239, 68, 68, 0.5)' }}>
+                                [HR Inbox]
+                              </div>
+                              <div className="text-xs self-center" style={{ color: '#FCA5A5' }}>
+                                receives manual notifications
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* What Actually Happens */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              What Actually Happens:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>Recruiters manually email HR and supervisors.</li>
+                              <li>Emma checks the HR inbox constantly for paperwork updates.</li>
+                              <li>DocuSign completion triggers an email, not a system update.</li>
+                            </ul>
+                          </div>
+
+                          {/* Pain Points */}
+                          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            <div className="font-semibold mb-2 text-base" style={{ color: '#FCA5A5' }}>
+                              Pain Points:
+                            </div>
+                            <ul className="list-disc list-inside space-y-1.5 ml-2" style={{ color: '#FEE2E2' }}>
+                              <li>No automated bridge JazzHR → HR.</li>
+                              <li>Supervisors often don't know a hire is coming.</li>
+                              <li>Emma must reconcile recruiter messages against JazzHR manually.</li>
+                            </ul>
+                          </div>
+                        </div>
+                      )
+                    ) : (
+                      <div className="whitespace-pre-line">{section.body}</div>
+                    )}
                     {section.tableHeaders && section.tableRows && (
                       <div className="mt-4">
                         <div className="mb-3 flex justify-end">
