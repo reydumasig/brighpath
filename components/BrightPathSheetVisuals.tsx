@@ -1226,10 +1226,18 @@ const BrightPathSheetVisuals: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 flex flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-900/80 backdrop-blur-md p-4 flex flex-col gap-4">
+      <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-900/95 backdrop-blur-md p-4 flex flex-col gap-4">
         <div>
-          <h1 className="text-lg font-semibold tracking-tight">BrightPath Sheet Visuals</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <div className="mb-3">
+            <img 
+              src="/logo.png" 
+              alt="SUMMIT360 SOLUTIONS" 
+              className="w-full max-w-[200px] h-auto"
+              style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
+            />
+          </div>
+          <h1 className="text-lg font-semibold tracking-tight text-white" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)' }}>BrightPath Sheet Visuals</h1>
+          <p className="text-xs text-slate-300 mt-1" style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)' }}>
             Simplistic visuals for Lynn based on <span className="font-semibold">Updated New Hires</span> &{' '}
             <span className="font-semibold">DSP Orientation record sheet</span>.
           </p>

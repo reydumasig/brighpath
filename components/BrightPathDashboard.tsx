@@ -1213,12 +1213,21 @@ const BrightPathDashboard: React.FC = () => {
       <aside 
         className="w-72 backdrop-blur-md p-4 flex flex-col gap-4"
         style={{ 
-          backgroundColor: '#1A2A44',
-          borderRight: '1px solid rgba(54, 196, 196, 0.2)'
+          backgroundColor: 'rgba(26, 42, 68, 0.95)',
+          borderRight: '1px solid rgba(54, 196, 196, 0.2)',
+          backdropFilter: 'blur(10px)'
         }}
       >
         <div className="mb-4">
-          <h1 className="text-xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-montserrat)' }}>
+          <div className="mb-3">
+            <img 
+              src="/logo.png" 
+              alt="SUMMIT360 SOLUTIONS" 
+              className="w-full max-w-[200px] h-auto"
+              style={{ filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
+            />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight mb-1" style={{ fontFamily: 'var(--font-montserrat)', color: '#FFFFFF' }}>
             BrightPath Ops
           </h1>
           <p className="text-xs" style={{ color: '#DCE1E7' }}>
@@ -1302,12 +1311,12 @@ const BrightPathDashboard: React.FC = () => {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-        <header className="mb-6">
-          <h2 className="text-2xl font-bold mb-1" style={{ fontFamily: 'var(--font-montserrat)' }}>
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto" style={{ position: 'relative', zIndex: 1 }}>
+        <header className="mb-6" style={{ backgroundColor: 'rgba(26, 42, 68, 0.6)', padding: '1.5rem', borderRadius: '0.5rem', backdropFilter: 'blur(8px)' }}>
+          <h2 className="text-2xl font-bold mb-1" style={{ fontFamily: 'var(--font-montserrat)', color: '#FFFFFF', textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)' }}>
             {activeArtifact.label}
           </h2>
-          <p className="text-sm max-w-2xl" style={{ color: '#DCE1E7' }}>
+          <p className="text-sm max-w-2xl" style={{ color: '#DCE1E7', textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)' }}>
             {activeArtifact.description}
           </p>
         </header>
@@ -1315,7 +1324,7 @@ const BrightPathDashboard: React.FC = () => {
         {/* Sections as accordions */}
         <section className="space-y-4">
           {filteredSections.length === 0 && (
-            <p className="text-sm" style={{ color: '#DCE1E7' }}>
+            <p className="text-sm" style={{ color: '#DCE1E7', textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)' }}>
               No matches found for your search in this section.
             </p>
           )}
@@ -1331,12 +1340,12 @@ const BrightPathDashboard: React.FC = () => {
                 className="border rounded-xl overflow-hidden transition"
                 style={{
                   backgroundColor: isCriticalIssue 
-                    ? 'rgba(220, 38, 38, 0.1)' 
+                    ? 'rgba(220, 38, 38, 0.25)' 
                     : isSummarySection
-                    ? 'rgba(220, 38, 38, 0.15)'
+                    ? 'rgba(220, 38, 38, 0.3)'
                     : isFlowDiagram 
-                    ? 'rgba(251, 191, 36, 0.1)' 
-                    : 'rgba(26, 42, 68, 0.5)',
+                    ? 'rgba(251, 191, 36, 0.25)' 
+                    : 'rgba(26, 42, 68, 0.75)',
                   borderColor: isCriticalIssue 
                     ? 'rgba(239, 68, 68, 0.5)' 
                     : isSummarySection
@@ -1344,7 +1353,8 @@ const BrightPathDashboard: React.FC = () => {
                     : isFlowDiagram 
                     ? 'rgba(251, 191, 36, 0.5)' 
                     : 'rgba(54, 196, 196, 0.2)',
-                  borderWidth: (isCriticalIssue || isFlowDiagram || isSummarySection) ? '2px' : '1px'
+                  borderWidth: (isCriticalIssue || isFlowDiagram || isSummarySection) ? '2px' : '1px',
+                  backdropFilter: 'blur(8px)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = isCriticalIssue 
@@ -1380,7 +1390,7 @@ const BrightPathDashboard: React.FC = () => {
                     {isFlowDiagram && (
                       <span className="text-amber-400" style={{ fontSize: '0.875rem' }}>🔄</span>
                     )}
-                    <h3 className="text-sm font-semibold" style={{ fontFamily: 'var(--font-montserrat)' }}>
+                    <h3 className="text-sm font-semibold" style={{ fontFamily: 'var(--font-montserrat)', color: '#FFFFFF', textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)' }}>
                       {section.title}
                     </h3>
                   </div>
@@ -1389,7 +1399,7 @@ const BrightPathDashboard: React.FC = () => {
                   </span>
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 pt-1 text-sm whitespace-pre-line" style={{ color: '#DCE1E7', lineHeight: '1.5' }}>
+                  <div className="px-4 pb-4 pt-1 text-sm whitespace-pre-line" style={{ color: '#DCE1E7', lineHeight: '1.5', textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)' }}>
                     {isCriticalIssue ? (
                       <div>
                         <div className="mb-3">
@@ -2364,11 +2374,12 @@ const BrightPathDashboard: React.FC = () => {
                                     style={{
                                       border: "1px solid rgba(54, 196, 196, 0.3)",
                                       padding: "0.5rem 0.75rem",
-                                      backgroundColor: "#1A2A44",
+                                      backgroundColor: "rgba(26, 42, 68, 0.95)",
                                       color: "#FFFFFF",
                                       textAlign: "left",
                                       fontFamily: "var(--font-montserrat)",
                                       fontWeight: 600,
+                                      textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)',
                                     }}
                                   >
                                     {header}
@@ -2385,8 +2396,10 @@ const BrightPathDashboard: React.FC = () => {
                                       style={{
                                         border: "1px solid rgba(54, 196, 196, 0.2)",
                                         padding: "0.4rem 0.75rem",
-                                        backgroundColor: idx % 2 === 0 ? "rgba(13, 17, 23, 0.9)" : "rgba(26, 42, 68, 0.8)",
+                                        backgroundColor: idx % 2 === 0 ? "rgba(13, 17, 23, 0.95)" : "rgba(26, 42, 68, 0.9)",
                                         whiteSpace: cIdx === 0 ? "normal" : "nowrap",
+                                        color: "#FFFFFF",
+                                        textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)',
                                       }}
                                     >
                                       {cell}

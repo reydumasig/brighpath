@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# sensitive data exports — never commit
+docs/*.csv
+docs/*.xlsx

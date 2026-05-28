@@ -1,0 +1,71 @@
+export const DEPT_HEADS = [
+  'Jordan Lin',
+  'Maya Chen',
+  'Devon Pierce',
+  'Priya Sundaram',
+  'Marcus Olson',
+  'Jamie Whitford',
+  'Ana Restrepo',
+  'Sam Ito',
+]
+
+export const PEOPLE = [
+  'Jordan Lin',
+  'Maya Chen',
+  'Devon Pierce',
+  'Priya Sundaram',
+  'Marcus Olson',
+  'Jamie Whitford',
+  'Ana Restrepo',
+  'Sam Ito',
+  'Rita Boateng',
+  'Brandon Kim',
+  'Lexi Park',
+  'Carlos Vega',
+  'Nina Osei',
+  'Terrence Hall',
+  'Sophia Nguyen',
+  'Derek Wills',
+  'Amara Diallo',
+  'Felix Castro',
+]
+
+export const PLAN_STATUSES = [
+  'Not Started',
+  'In Progress',
+  'Blocked',
+  'Done',
+] as const
+
+export const QUARTER_WEEKS: Record<string, string[]> = {
+  'FY26-Q1': [
+    '2026-01-05',
+    '2026-01-12',
+    '2026-01-19',
+    '2026-01-26',
+    '2026-02-02',
+    '2026-02-09',
+    '2026-02-16',
+    '2026-02-23',
+    '2026-03-02',
+    '2026-03-09',
+    '2026-03-16',
+    '2026-03-23',
+    '2026-03-30',
+  ],
+  'FY26-Q2': [
+    '2026-04-06',
+    '2026-04-13',
+    '2026-04-20',
+    '2026-04-27',
+    '2026-05-04',
+    '2026-05-11',
+    '2026-05-18',
+    '2026-05-25',
+    '2026-06-01',
+    '2026-06-08',
+    '2026-06-15',
+    '2026-06-22',
+    '2026-06-29',
+  ],
+}
